@@ -2,8 +2,11 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import jinja2
-
 import calendar
+from datetime import datetime, timedelta
+import numpy as np
+
+from chart_generators.bar_generators import BarGenerators
 
 
 class Report_Plotter():
@@ -22,23 +25,91 @@ class Report_Plotter():
 
     def generate_report(self):
         self.load_data()
-        # self.generate_trade_duration_df()
+        self.generate_duration_timedeltas()
         # self.generate_account_balance_df()
         # self.generate_monthly_trades_df()
         # self.generate_monthly_profits_df()
-        # self.build_html_report()
+        self.build_html_report()
     
 
     #* Load data from excel into dataframes
     def load_data(self):
         self.df = pd.read_excel(self.xls_location, sheet_name='trade_data')  
+        
+
+
+    def generate_trade_action_chart(self):
+        action_type_counts = self.df['Action'].value_counts().rename_axis('Action').reset_index(name='Count')
+        chart_params = {
+            'data' : action_type_counts,
+            'title' : 'Total Trades By Direction',
+            'x' : action_type_counts['Action'],
+            'y' : action_type_counts['Count'],
+            'labels' : None,
+            'legend' : None
+        }
+        return BarGenerators().generate_bar_chart(chart_params)
+
+
+
+    def generate_trade_assets_chart(self):
+        asset_counts = self.df['Symbol'].value_counts().rename_axis('Symbol').reset_index(name='Count')
+        chart_params = {
+            'data' : asset_counts,
+            'title' : 'Total Trades By Asset',
+            'x' : asset_counts['Symbol'],
+            'y' : asset_counts['Count'],
+            'labels' : None,
+            'legend' : None
+        }
+        return BarGenerators().generate_bar_chart(chart_params)
+
+
+
+    def generate_duration_timedeltas(self):
+        self.df['Duration Delta'] = ''
+        self.df['Duration Seconds'] = ''
+        for i, row in self.df.iterrows():
+            duration_value = row['Duration (DD:HH:MM:SS)']
+            index = duration_value.find(':')
+            days = int(duration_value[:index])
+            hours = int(duration_value[index+1:index+3])
+            minutes = int(duration_value[index+4:index+6])
+            seconds = int(duration_value[index+7:])
+            time_delta = timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+            self.df.at[i, 'Duration Delta'] = time_delta
+            self.df.at[i, 'Duration Seconds'] = time_delta.total_seconds()
+
+
+
+
+    def generate_average_duration_by_action_chart(self):
         print(self.df.head())
+        print(self.df.columns.to_list())
+
+        new = self.df[['Symbol','Duration Seconds']].copy()
+        print(new)
+
+        means = new.groupby('Symbol').mean()
+        # means['new'] = pd.to_timedelta(means['new'])
+        print(means)
+
+        std = new.groupby('Symbol').std()
+        # std['new'] = pd.to_timedelta(std['new'])
+        print(std)
+
+        # asset_counts = self.df['Symbol'].value_counts().rename_axis('Symbol').reset_index(name='Count')
+        # chart_params = {
+        #     'data' : asset_counts,
+        #     'title' : 'Total Trades By Asset',
+        #     'x' : asset_counts['Symbol'],
+        #     'y' : asset_counts['Count'],
+        #     'labels' : None,
+        #     'legend' : None
+        # }
+        # return BarGenerators().generate_bar_chart(chart_params)
 
 
-    # def generate_trade_duration_df(self):
-    #     pd.set_option("plotting.backend", "plotly") #?
-    #     duration_dataset = self.trades_data_df.filter(['Duration (hrs)','Profit'], axis=1)
-    #     self.trades_duration_dataset = duration_dataset[duration_dataset['Profit'].notna()]
 
 
     # def generate_account_balance_df(self):
@@ -71,17 +142,17 @@ class Report_Plotter():
     #     self.monthly_profits_df = profit_series
 
     
-    # def build_html_report(self): # Obtain Template
-    #     templateLoader = jinja2.FileSystemLoader(searchpath="./")
-    #     templateEnv = jinja2.Environment(loader=templateLoader)
-    #     TEMPLATE_FILE = "/reports/template.html"
-    #     template = templateEnv.get_template(TEMPLATE_FILE)
-    #     self.inject_html_data(template)
+    def build_html_report(self): # Obtain Template
+        templateLoader = jinja2.FileSystemLoader(searchpath="./")
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = "/reports/template.html"
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        self.inject_html_data(template)
 
     
     # #* Inject Data into HTML Template
-    # def inject_html_data(self, template): # Populate Template
-    #     output_html= template.render(
+    def inject_html_data(self, template): # Populate Template
+        output_html= template.render(
     #         #! Report Text:
     #         system_name = self.get_system_name(),
     #         symbol = self.get_equity(),
@@ -133,13 +204,9 @@ class Report_Plotter():
     #             'labels' : {"value":"Count"},
     #             'legend' : {'title_text':'Order Type'}
     #         }),
-    #         fig1_jpeg = self.generate_scatter_plot({
-    #             'data' : self.trades_duration_dataset,
-    #             'x' : 'Duration (hrs)',
-    #             'y' : 'Profit',
-    #             'width' : 600,
-    #             'height' : 600
-    #         }),
+            fig1_jpeg = self.generate_trade_action_chart(),
+            fig2_jpeg = self.generate_trade_assets_chart(),
+            fig3_jpeg = self.generate_average_duration_by_action_chart(),
     #         fig2_jpeg = self.generate_heatmap({
     #             'data' : self.trades_duration_dataset,
     #             'x' : 'Duration (hrs)',
@@ -161,10 +228,10 @@ class Report_Plotter():
     #             'x' : 'Duration (hrs)',
     #             'nbins' : 20,
     #         }),
-    #     ) 
+        ) 
 
-    #     with open(self.xls_location[:-5] + '.html', "w") as f:
-    #         f.write(output_html)
+        with open(self.xls_location[:-5] + '.html', "w") as f:
+            f.write(output_html)
 
 
 

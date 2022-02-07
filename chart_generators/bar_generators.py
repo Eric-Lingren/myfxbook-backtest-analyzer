@@ -1,5 +1,6 @@
 import plotly.express as px
 from operator import itemgetter
+from chart_generators.utilities import convert_chart_figure_to_jpeg
 
 class BarGenerators():
 
@@ -15,5 +16,5 @@ class BarGenerators():
         )
         bar_fig.update_layout(barmode='relative')
         bar_fig.update_layout(legend=legend)
-        bar_chart_jpeg = self.convert_chart_figure_to_jpeg(bar_fig)
+        bar_chart_jpeg = convert_chart_figure_to_jpeg(bar_fig)
         return bar_chart_jpeg
