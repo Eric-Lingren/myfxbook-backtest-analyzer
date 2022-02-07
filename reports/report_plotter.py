@@ -2,9 +2,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import jinja2
-from base64 import b64encode
+
 import calendar
-from operator import itemgetter
 
 
 class Report_Plotter():
@@ -168,114 +167,9 @@ class Report_Plotter():
     #         f.write(output_html)
 
 
-    # def convert_chart_figure_to_jpeg(self, figure):
-    #     figure_bytes = figure.to_image(format="jpeg", width=700)
-    #     figure_jpeg = b64encode(figure_bytes).decode("utf-8")
-    #     return figure_jpeg
-    
-
-    # def generate_line_chart(self, chart_params):
-    #     data, title, y, labels = itemgetter('data', 'title', 'y', 'labels')(chart_params)
-    #     line_fig = px.line(
-    #         data, 
-    #         title=title,
-    #         y=y, 
-    #         labels=labels, 
-    #         color_discrete_sequence=["#00FF00"] 
-    #     )
-    #     line_chart_jpeg = self.convert_chart_figure_to_jpeg(line_fig)
-    #     return line_chart_jpeg
 
 
-    # def generate_bar_chart(self, chart_params):
-    #     data, title, x, y, labels, legend = itemgetter('data', 'title', 'x', 'y', 'labels', 'legend')(chart_params)
-    #     bar_fig = px.bar(
-    #         data, 
-    #         title=title,
-    #         x=x, 
-    #         y=y, 
-    #         text_auto=True,
-    #         labels=labels, 
-    #     )
-    #     bar_fig.update_layout(barmode='relative')
-    #     bar_fig.update_layout(legend=legend)
-    #     bar_chart_jpeg = self.convert_chart_figure_to_jpeg(bar_fig)
-    #     return bar_chart_jpeg
 
-
-    # def generate_scatter_plot(self, chart_params):
-    #     data, x, y, height, width = itemgetter('data', 'x', 'y', 'height', 'width')(chart_params)
-    #     scatter_plot_fig = px.scatter(
-    #         data, 
-    #         x=x, 
-    #         y=y, 
-    #         height=height,
-    #         width=width, 
-    #     )
-    #     scatter_plot_jpeg = self.convert_chart_figure_to_jpeg(scatter_plot_fig)
-    #     return scatter_plot_jpeg
-
-    
-    # def generate_heatmap(self, chart_params):
-    #     data, x, y, nbinsx, nbinsy = itemgetter('data', 'x', 'y', 'nbinsx', 'nbinsy')(chart_params)
-    #     heatmap_fig = px.density_heatmap(
-    #         data, 
-    #         x=x, 
-    #         y=y, 
-    #         nbinsx=nbinsx, 
-    #         nbinsy=nbinsy
-    #     )
-    #     heatmap_jpeg = self.convert_chart_figure_to_jpeg(heatmap_fig)
-    #     return heatmap_jpeg
-
-
-    # def generate_2d_histogram_contour(self, chart_params):
-    #     x, y = itemgetter('x', 'y')(chart_params)
-    #     histogram_contour_fig = go.Figure(go.Histogram2dContour(
-    #         x=x, 
-    #         y=y,
-    #         colorscale = 'Jet',
-    #         contours = dict(
-    #             showlabels = True,
-    #             labelfont = dict(
-    #                 family = 'Raleway',
-    #                 color = 'white'
-    #             )
-    #         ),
-    #         hoverlabel = dict(
-    #             bgcolor = 'white',
-    #             bordercolor = 'black',
-    #             font = dict(
-    #                 family = 'Raleway',
-    #                 color = 'black'
-    #             )
-    #         )
-    #     ))
-    #     histogram_contour_jpeg = self.convert_chart_figure_to_jpeg(histogram_contour_fig)
-    #     return histogram_contour_jpeg
-
-    
-    # def generate_density_contour(self, chart_params):
-    #     data, x, y = itemgetter('data', 'x', 'y')(chart_params)
-    #     density_contour_fig = px.density_contour(
-    #         data,     
-    #         x=x, 
-    #         y=y
-    #     )
-    #     density_contour_fig.update_traces(contours_coloring="fill", contours_showlabels = True)
-    #     density_contour_jpeg = self.convert_chart_figure_to_jpeg(density_contour_fig)
-    #     return density_contour_jpeg
-
-
-    # def generate_histogram(self, chart_params):
-    #     data, x, nbins = itemgetter('data', 'x', 'nbins')(chart_params)
-    #     histogram_fig = px.histogram(
-    #         data, 
-    #         x=x, 
-    #         nbins=nbins
-    #     )
-    #     histogram_jpeg = self.convert_chart_figure_to_jpeg(histogram_fig)
-    #     return histogram_jpeg
 
 
     # def get_system_name(self):
